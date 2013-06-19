@@ -4,6 +4,7 @@
 
 package mit.edu.obmg.glassheat.tasks;
 
+import ioio.lib.api.PwmOutput;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.IOIOLooper;
@@ -14,6 +15,10 @@ import android.os.IBinder;
 
 public class IOIOBGService extends IOIOService{
 	private boolean mIOIOConnected = false;
+	
+	private PwmOutput mHeater;
+	private final int Heat_Pin = 4;
+	private final int PWM_FREQ = 10000;
 
 	@Override
 	protected IOIOLooper createIOIOLooper() {
@@ -39,6 +44,8 @@ public class IOIOBGService extends IOIOService{
 			protected void setup() throws ConnectionLostException,
 					InterruptedException {
 				mIOIOConnected = true; 
+				
+				mHeater = ioio_.openPwmOutput(Heat_Pin, PWM_FREQ);
 			}
 
 			/**
@@ -79,5 +86,16 @@ public class IOIOBGService extends IOIOService{
 
 	public boolean isConnected(){
 		return this.mIOIOConnected;
+	}
+	
+	public void setHeat(int heatValue){
+		if(mIOIOConnected){
+			try{
+				mHeater.setPulseWidth(heatValue);
+			}catch(ConnectionLostException e){
+				e.printStackTrace(); 
+				mIOIOConnected = false; 
+			}
+		}
 	}
 }

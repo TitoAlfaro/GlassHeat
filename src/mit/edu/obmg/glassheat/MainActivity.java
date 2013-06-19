@@ -13,6 +13,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.view.Menu;
+import android.view.View;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	private IOIOBGService mIOIOService;
@@ -20,12 +22,18 @@ public class MainActivity extends Activity {
 
 	private static final String ML_GLASS = "http://tagnet.media.mit.edu/rfid/api/rfid_info"; 
     public final int mCheckInterval = 30000; // 5 minutes = 300000, 2 min = 120000
+    
+    private TextView foundMe;
+    private int mHeatValue;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		startService(new Intent(this,IOIOBGService.class));
+		
+		foundMe = (TextView) findViewById(R.id.found_you);
+		foundMe.setVisibility(View.INVISIBLE);
 
 		final Handler checkHandler = new Handler();
 		checkHandler.postDelayed(new Runnable() { 
@@ -90,7 +98,19 @@ public class MainActivity extends Activity {
 		glassCheck.execute(ML_GLASS, Integer.toString(mCheckInterval));
 	}
 	
-	public void handleGlass(){
+	public void handleGlass(String report){
+		String hide = "e14-348-1";
+		if (hide.equals(report)){
+			foundMe.setVisibility(View.VISIBLE);
+			foundMe.setText("you found Me");
+			mHeatValue = 70;
+    		mIOIOService.setHeat(mHeatValue);
+		}else{
+			foundMe.setVisibility(View.VISIBLE);
+			foundMe.setText("Keep Looking");
+			mHeatValue = 1000;
+    		mIOIOService.setHeat(mHeatValue);
+		}
 		
 	}
 }

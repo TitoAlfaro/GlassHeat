@@ -32,6 +32,7 @@ public class GlassHeatReader extends AsyncTask<String, Void, JSONObject>  {
     JSONArray name = null;
     private static final String TAG_TAGS = "tags";
     JSONObject tag = null;
+    private String report;
     private String test;
     private String tito = "4D656469614C616243016115";
     private String tito2 = "4D656469614C616243014366";
@@ -115,12 +116,9 @@ public class GlassHeatReader extends AsyncTask<String, Void, JSONObject>  {
         				for(int j=0; j<id.length();j++){
 	        				test = id.getString(j);
 
-	        				if (debugState == "on"){
-	        					System.out.println("Location: "+ name + " ID: "+ test + " at: " + currentTime.getTime());
-	        				}
-		        			
 	        				//PrintDetect (test);
 		        			if (test.equals(tito) || test.equals(tito2)){
+		        				report = name;
 			        			System.out.println("I saw Tito! in " + name + " at: " + currentTime.getTime());
 		        			}
 		        			if (test.equals(micah)){
@@ -134,7 +132,7 @@ public class GlassHeatReader extends AsyncTask<String, Void, JSONObject>  {
 		        			}*/
         				}
 
-        		        this.activity.handleGlass();
+        		        this.activity.handleGlass(report);
         			}
     			}
 			}catch (JSONException e){
