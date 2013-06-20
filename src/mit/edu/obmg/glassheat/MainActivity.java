@@ -1,45 +1,70 @@
+/*
+ * Written by Santiago Alfaro,
+ * based on the HelloIOIO code
+ */
 package mit.edu.obmg.glassheat;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import mit.edu.obmg.glassheat.tasks.GlassHeatReader;
-import mit.edu.obmg.glassheat.tasks.IOIOBGService;
-import mit.edu.obmg.glassheat.tasks.IOIOBGService.LocalBinder;
-import android.net.wifi.WifiManager;
+import ioio.lib.api.DigitalOutput;
+import ioio.lib.api.PwmOutput;
+import ioio.lib.api.Uart;
+import ioio.lib.api.exception.ConnectionLostException;
+import ioio.lib.util.BaseIOIOLooper;
+import ioio.lib.util.IOIOLooper;
+import ioio.lib.util.android.IOIOActivity;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
-import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.view.Menu;
+import android.util.Log;
 import android.view.View;
+import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
-public class MainActivity extends Activity {
-	private IOIOBGService mIOIOService;
-	private boolean mBounded = false;
+public class MainActivity extends IOIOActivity {
+	private static final String TAG = "HeatGlass";
 
-	private static final String ML_GLASS = "http://tagnet.media.mit.edu/rfid/api/rfid_info"; 
-    public final int mCheckInterval = 30000; // 5 minutes = 300000, 2 min = 120000
-    
-    private TextView foundMe;
-    private int mHeatValue;
+	private ToggleButton button_;
+
+	//Glass check
+	private static final String ML_GLASS = "http://tagnet.media.mit.edu/rfid/api/rfid_info";
+	public final int mCheckInterval = 30000; // 5 minutes = 300000, 2 min = 120000
+	private TextView mfoundMe;
+
+	//Heat FeedBack
+	//private final int mOutHeatPin = 34;
+	private final int mPWMFreq = 100;
+	private SeekBar mHeatBar;	
+	private int mHeatValue;
+	private TextView mHeatText;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		startService(new Intent(this,IOIOBGService.class));
-		
-		foundMe = (TextView) findViewById(R.id.found_you);
-		foundMe.setVisibility(View.INVISIBLE);
+		button_ = (ToggleButton) findViewById(R.id.button);
+
+		//Glass
+		mfoundMe = (TextView) findViewById(R.id.found_you);
+		mfoundMe.setVisibility(View.INVISIBLE);
+
+		//Heat
+		mHeatText = (TextView) findViewById(R.id.seekBarText);
+		mHeatBar = (SeekBar) findViewById(R.id.seekBarHeat);
+
+		//mColorIndicator = findViewById(R.id.ColorIndicator);
+		button_.setBackgroundColor(Color.rgb(150, 150, 150));
 
 		final Handler checkHandler = new Handler();
 		checkHandler.postDelayed(new Runnable() { 
 			@Override
 			public void run() {
-				// on launch of activity we execute an async task 
 				checkMLGlass(); 
 				checkHandler.postDelayed(this, mCheckInterval);
 			}
@@ -48,69 +73,89 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
-	protected void onStart() {
-		super.onStart();
-		
-		Intent mIntent = new Intent(this, IOIOBGService.class);
-		bindService(mIntent, mConnection, BIND_AUTO_CREATE);
-	}
-
-	@Override
 	protected void onStop() {
 		super.onStop();
-		if(mBounded) {
-			unbindService(mConnection);
-			mBounded = false;
-		}
 	}
 
-	@Override
-	protected void onDestroy(){
-		//stop the service on exit of program
-		stopService((new Intent(this, IOIOBGService.class)));
-		super.onDestroy(); 
-	}
+	/**
+	 * This is the thread on which all the IOIO activity happens. It will be run
+	 * every time the application is resumed and aborted when it is paused. The
+	 * method setup() will be called right after a connection with the IOIO has
+	 * been established (which might happen several times!). Then, loop() will
+	 * be called repetitively until the IOIO gets disconnected.
+	 */
+	class Looper extends BaseIOIOLooper {
+		/** The on-board LED. */
+		private DigitalOutput led_;
 
-	ServiceConnection mConnection = new ServiceConnection() { 
+		//Heat
+		private PwmOutput mHeatBar;
+
+		/**
+		 * Called every time a connection with IOIO has been established.
+		 * Typically used to open pins.
+		 * 
+		 * @throws ConnectionLostException
+		 *             When IOIO connection is lost.
+		 * 
+		 * @see ioio.lib.util.AbstractIOIOActivity.IOIOThread#setup()
+		 */
 		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			mBounded = true;
-			LocalBinder mLocalBinder = (LocalBinder)service;
-			mIOIOService = mLocalBinder.getServerInstance();
+		protected void setup() throws ConnectionLostException {
+			led_ = ioio_.openDigitalOutput(0, true);
+
+			//mHeatBar = ioio_.openPwmOutput(mOutHeatPin, mPWMFreq);
+
 		}
 
+		/**
+		 * Called repetitively while the IOIO is connected.
+		 * 
+		 * @throws ConnectionLostException
+		 *             When IOIO connection is lost.
+		 * 
+		 * @see ioio.lib.util.AbstractIOIOActivity.IOIOThread#loop()
+		 */
 		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			mBounded = false;
-			mIOIOService = null;
-		}
-	};
+		public void loop() throws ConnectionLostException {
+			led_.write(!button_.isChecked());
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
+			try {
+				//mHeatBar.setPulseWidth(mHeatValue);
+
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
 	}
-	
+
+	/**
+	 * A method to create our IOIO thread.
+	 * 
+	 * @see ioio.lib.util.AbstractIOIOActivity#createIOIOThread()
+	 */
+	@Override
+	protected IOIOLooper createIOIOLooper() {
+		return new Looper();
+	}
+
 	private void checkMLGlass(){
 		GlassHeatReader glassCheck = new GlassHeatReader(MainActivity.this);
 		glassCheck.execute(ML_GLASS, Integer.toString(mCheckInterval));
 	}
-	
+
 	public void handleGlass(String report){
 		String hide = "e14-348-1";
 		if (hide.equals(report)){
-			foundMe.setVisibility(View.VISIBLE);
-			foundMe.setText("you found Me");
+			mfoundMe.setVisibility(View.VISIBLE);
+			mfoundMe.setText("you found Me");
 			mHeatValue = 70;
-    		mIOIOService.setHeat(mHeatValue);
+			//mIOIOService.setHeat(mHeatValue);
 		}else{
-			foundMe.setVisibility(View.VISIBLE);
-			foundMe.setText("Keep Looking");
+			mfoundMe.setVisibility(View.VISIBLE);
+			mfoundMe.setText("Keep Looking");
 			mHeatValue = 1000;
-    		mIOIOService.setHeat(mHeatValue);
+			//mIOIOService.setHeat(mHeatValue);
 		}
-		
 	}
 }

@@ -4,5 +4,6 @@
     <string name="app_name">GlassHeat</string>
     <string name="action_settings">Settings</string>
     <string name="found_you">You Found Me!!!</string>
+    <string name="seekBarText">Heat Value: 0</string>
 
 </resources>

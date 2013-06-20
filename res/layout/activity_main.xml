@@ -14,4 +14,31 @@
         android:layout_height="wrap_content"
         android:text="@string/found_you" />
 
+    <ToggleButton
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/found_you"
+        android:layout_below="@+id/found_you"
+        android:layout_marginTop="21dp"
+        android:text="ToggleButton" />
+
+    <TextView
+        android:id="@+id/seekBarText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/seekBarHeat"
+        android:layout_below="@+id/button"
+        android:layout_marginTop="49dp"
+        android:text="@string/seekBarText" />
+
+    <SeekBar
+        android:id="@+id/seekBarHeat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button"
+        android:layout_below="@+id/seekBarText"
+        android:layout_marginTop="60dp"
+        android:scrollbarStyle="insideOverlay" />
+
 </RelativeLayout>

@@ -66,7 +66,7 @@ public class GlassHeatReader extends AsyncTask<String, Void, JSONObject>  {
             HttpGet httpGET = new HttpGet(urls[0]);
             HttpResponse httpResponse = httpClient.execute(httpGET);
             int status = httpResponse.getStatusLine().getStatusCode();
-            //System.out.println(status);
+            System.out.println("Status: "+status);
             HttpEntity httpEntity = httpResponse.getEntity();
             jsonString = EntityUtils.toString(httpEntity);
  
