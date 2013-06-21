@@ -24,12 +24,14 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-public class MainActivity extends IOIOActivity {
+public class MainActivity extends IOIOActivity implements OnSeekBarChangeListener{
 	private static final String TAG = "HeatGlass";
 
+	//UI
 	private ToggleButton button_;
 
 	//Glass check
@@ -38,11 +40,15 @@ public class MainActivity extends IOIOActivity {
 	private TextView mfoundMe;
 
 	//Heat FeedBack
-	//private final int mOutHeatPin = 34;
+	private final int mOutHeatPin = 34;
 	private final int mPWMFreq = 100;
+	private final int POLLING_DELAY = 150;
+	//HeatBar UI
 	private SeekBar mHeatBar;	
 	private int mHeatValue;
 	private TextView mHeatText;
+	private long mLastChange;
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,9 +63,9 @@ public class MainActivity extends IOIOActivity {
 		//Heat
 		mHeatText = (TextView) findViewById(R.id.seekBarText);
 		mHeatBar = (SeekBar) findViewById(R.id.seekBarHeat);
+		mHeatBar.setOnSeekBarChangeListener(this);
+		mHeatBar.setProgress(0);
 
-		//mColorIndicator = findViewById(R.id.ColorIndicator);
-		button_.setBackgroundColor(Color.rgb(150, 150, 150));
 
 		final Handler checkHandler = new Handler();
 		checkHandler.postDelayed(new Runnable() { 
@@ -89,7 +95,9 @@ public class MainActivity extends IOIOActivity {
 		private DigitalOutput led_;
 
 		//Heat
-		private PwmOutput mHeatBar;
+		private PwmOutput mHeatPWM;
+
+		private PwmOutput mGreenLed;
 
 		/**
 		 * Called every time a connection with IOIO has been established.
@@ -103,8 +111,8 @@ public class MainActivity extends IOIOActivity {
 		@Override
 		protected void setup() throws ConnectionLostException {
 			led_ = ioio_.openDigitalOutput(0, true);
+			mHeatPWM = ioio_.openPwmOutput(mOutHeatPin, mPWMFreq);
 
-			//mHeatBar = ioio_.openPwmOutput(mOutHeatPin, mPWMFreq);
 
 		}
 
@@ -121,7 +129,9 @@ public class MainActivity extends IOIOActivity {
 			led_.write(!button_.isChecked());
 
 			try {
-				//mHeatBar.setPulseWidth(mHeatValue);
+				//mHeatValue = mHeatBar.getProgress();
+				mHeatPWM.setPulseWidth(mHeatValue*100);
+				Log.i(TAG, "setPulseWidth: "+ mHeatValue*100);
 
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -149,13 +159,37 @@ public class MainActivity extends IOIOActivity {
 		if (hide.equals(report)){
 			mfoundMe.setVisibility(View.VISIBLE);
 			mfoundMe.setText("you found Me");
-			mHeatValue = 70;
-			//mIOIOService.setHeat(mHeatValue);
+			mHeatValue = 80;
 		}else{
 			mfoundMe.setVisibility(View.VISIBLE);
 			mfoundMe.setText("Keep Looking");
-			mHeatValue = 1000;
-			//mIOIOService.setHeat(mHeatValue);
+			mHeatValue = 20;
 		}
+	}
+
+	@Override
+	public void onProgressChanged(SeekBar seekBar, 	int progress, boolean fromUser) {
+
+		if (System.currentTimeMillis() - mLastChange > POLLING_DELAY) {
+			handleHeat(seekBar);
+			mLastChange = System.currentTimeMillis();
+		}
+	}
+
+	@Override
+	public void onStartTrackingTouch(SeekBar seekBar) {
+		mLastChange = System.currentTimeMillis();
+
+	}
+
+	@Override
+	public void onStopTrackingTouch(SeekBar seekBar) {
+		handleHeat(seekBar);
+
+	}
+
+	private void handleHeat(final SeekBar seekBar){
+		//mHeatValue = seekBar.getProgress();
+		mHeatText.setText("Heat Value: " + mHeatValue*100);
 	}
 }

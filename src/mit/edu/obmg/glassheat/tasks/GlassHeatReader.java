@@ -19,9 +19,10 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class GlassHeatReader extends AsyncTask<String, Void, JSONObject>  {
-    
+    private static String TAG = "GlassHeatReader";
 	WifiManager WiFi;
     private Context context;
 	private MainActivity activity;
@@ -66,7 +67,7 @@ public class GlassHeatReader extends AsyncTask<String, Void, JSONObject>  {
             HttpGet httpGET = new HttpGet(urls[0]);
             HttpResponse httpResponse = httpClient.execute(httpGET);
             int status = httpResponse.getStatusLine().getStatusCode();
-            System.out.println("Status: "+status);
+            Log.d(TAG, "Status: "+status);
             HttpEntity httpEntity = httpResponse.getEntity();
             jsonString = EntityUtils.toString(httpEntity);
  
