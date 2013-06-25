@@ -28,7 +28,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-public class MainActivity extends IOIOActivity implements OnSeekBarChangeListener{
+public class GlassHeatMain extends IOIOActivity implements OnSeekBarChangeListener{
 	private static final String TAG = "HeatGlass";
 
 	//UI
@@ -82,14 +82,6 @@ public class MainActivity extends IOIOActivity implements OnSeekBarChangeListene
 	protected void onStop() {
 		super.onStop();
 	}
-
-	/**
-	 * This is the thread on which all the IOIO activity happens. It will be run
-	 * every time the application is resumed and aborted when it is paused. The
-	 * method setup() will be called right after a connection with the IOIO has
-	 * been established (which might happen several times!). Then, loop() will
-	 * be called repetitively until the IOIO gets disconnected.
-	 */
 	class Looper extends BaseIOIOLooper {
 		/** The on-board LED. */
 		private DigitalOutput led_;
@@ -99,15 +91,7 @@ public class MainActivity extends IOIOActivity implements OnSeekBarChangeListene
 
 		private PwmOutput mGreenLed;
 
-		/**
-		 * Called every time a connection with IOIO has been established.
-		 * Typically used to open pins.
-		 * 
-		 * @throws ConnectionLostException
-		 *             When IOIO connection is lost.
-		 * 
-		 * @see ioio.lib.util.AbstractIOIOActivity.IOIOThread#setup()
-		 */
+		
 		@Override
 		protected void setup() throws ConnectionLostException {
 			led_ = ioio_.openDigitalOutput(0, true);
@@ -150,7 +134,7 @@ public class MainActivity extends IOIOActivity implements OnSeekBarChangeListene
 	}
 
 	private void checkMLGlass(){
-		GlassHeatReader glassCheck = new GlassHeatReader(MainActivity.this);
+		GlassHeatReader glassCheck = new GlassHeatReader(GlassHeatMain.this);
 		glassCheck.execute(ML_GLASS, Integer.toString(mCheckInterval));
 	}
 

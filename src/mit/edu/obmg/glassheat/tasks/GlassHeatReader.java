@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 
-import mit.edu.obmg.glassheat.MainActivity;
+import mit.edu.obmg.glassheat.GlassHeatMain;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -25,7 +25,7 @@ public class GlassHeatReader extends AsyncTask<String, Void, JSONObject>  {
     private static String TAG = "GlassHeatReader";
 	WifiManager WiFi;
     private Context context;
-	private MainActivity activity;
+	private GlassHeatMain activity;
 	
 	private static final String TAG_POLLERS = "pollers";
     JSONArray pollers = null;
@@ -49,7 +49,7 @@ public class GlassHeatReader extends AsyncTask<String, Void, JSONObject>  {
      * Cosntruct a task
      * @param activity
      */
-    public GlassHeatReader (MainActivity activity){
+    public GlassHeatReader (GlassHeatMain activity){
     	super();
     	this.activity = activity;
     	this.context = this.activity.getApplicationContext();
