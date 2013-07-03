@@ -29,20 +29,22 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 public class GlassHeatMain extends IOIOActivity implements OnSeekBarChangeListener{
-	private static final String TAG = "HeatGlass";
+	private static final String TAG = "HeatGlassMain";
 
 	//UI
-	private ToggleButton button_;
+	private ToggleButton mDebugButton;
 
 	//Glass check
 	private static final String ML_GLASS = "http://tagnet.media.mit.edu/rfid/api/rfid_info";
-	public final int mCheckInterval = 30000; // 5 minutes = 300000, 2 min = 120000
+	public final int mCheckInterval = 5000; // 5 minutes = 300000, 2 min = 120000
 	private TextView mfoundMe;
 
 	//Heat FeedBack
 	private final int mOutHeatPin = 34;
 	private final int mPWMFreq = 100;
 	private final int POLLING_DELAY = 150;
+	private final int HEAT_VALUE_MULTIPLIER = 100;
+	
 	//HeatBar UI
 	private SeekBar mHeatBar;	
 	private int mHeatValue;
@@ -54,7 +56,7 @@ public class GlassHeatMain extends IOIOActivity implements OnSeekBarChangeListen
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		button_ = (ToggleButton) findViewById(R.id.button);
+		mDebugButton = (ToggleButton) findViewById(R.id.button);
 
 		//Glass
 		mfoundMe = (TextView) findViewById(R.id.found_you);
@@ -79,43 +81,36 @@ public class GlassHeatMain extends IOIOActivity implements OnSeekBarChangeListen
 	}
 
 	@Override
+	protected void onStart() {
+		super.onStart();
+	}
+	
+	@Override
 	protected void onStop() {
 		super.onStop();
 	}
+	
 	class Looper extends BaseIOIOLooper {
 		/** The on-board LED. */
-		private DigitalOutput led_;
+		private DigitalOutput mDebugLED;
 
 		//Heat
 		private PwmOutput mHeatPWM;
-
-		private PwmOutput mGreenLed;
-
 		
 		@Override
 		protected void setup() throws ConnectionLostException {
-			led_ = ioio_.openDigitalOutput(0, true);
+			mDebugLED = ioio_.openDigitalOutput(0, true);
 			mHeatPWM = ioio_.openPwmOutput(mOutHeatPin, mPWMFreq);
-
-
 		}
 
-		/**
-		 * Called repetitively while the IOIO is connected.
-		 * 
-		 * @throws ConnectionLostException
-		 *             When IOIO connection is lost.
-		 * 
-		 * @see ioio.lib.util.AbstractIOIOActivity.IOIOThread#loop()
-		 */
 		@Override
 		public void loop() throws ConnectionLostException {
-			led_.write(!button_.isChecked());
+			mDebugLED.write(!mDebugButton.isChecked());
 
 			try {
-				//mHeatValue = mHeatBar.getProgress();
-				mHeatPWM.setPulseWidth(mHeatValue*100);
-				Log.i(TAG, "setPulseWidth: "+ mHeatValue*100);
+				if (mDebugButton.isChecked()== true) mHeatValue = mHeatBar.getProgress();
+				mHeatPWM.setPulseWidth(mHeatValue*HEAT_VALUE_MULTIPLIER);
+				Log.i(TAG, "setPulseWidth: "+ mHeatValue*HEAT_VALUE_MULTIPLIER);
 
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -123,16 +118,10 @@ public class GlassHeatMain extends IOIOActivity implements OnSeekBarChangeListen
 		}
 	}
 
-	/**
-	 * A method to create our IOIO thread.
-	 * 
-	 * @see ioio.lib.util.AbstractIOIOActivity#createIOIOThread()
-	 */
 	@Override
 	protected IOIOLooper createIOIOLooper() {
 		return new Looper();
 	}
-
 	private void checkMLGlass(){
 		GlassHeatReader glassCheck = new GlassHeatReader(GlassHeatMain.this);
 		glassCheck.execute(ML_GLASS, Integer.toString(mCheckInterval));

@@ -133,7 +133,7 @@ public class GlassHeatReader extends AsyncTask<String, Void, JSONObject>  {
 		        			}*/
         				}
 
-        		        this.activity.handleGlass(report);
+        		        //this.activity.handleGlass(report);
         			}
     			}
 			}catch (JSONException e){
