@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 
 import mit.edu.obmg.glassheat.GlassHeatMain;
+import mit.edu.obmg.glassheat.GlassHeatActivity;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -19,40 +20,38 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 
 public class GlassHeatReader extends AsyncTask<String, Void, JSONObject>  {
     private static String TAG = "GlassHeatReader";
 	WifiManager WiFi;
     private Context context;
-	private GlassHeatMain activity;
+    private GlassHeatMain mGHMain; 
+	private GlassHeatActivity mGHActivity;
 	
-	private static final String TAG_POLLERS = "pollers";
-    JSONArray pollers = null;
-    private static final String TAG_NAME = "name";
-    JSONArray name = null;
-    private static final String TAG_TAGS = "tags";
-    JSONObject tag = null;
-    private String report;
-    private String test;
-    private String tito = "4D656469614C616243016115";
-    private String tito2 = "4D656469614C616243014366";
-    private String micah = "4D656469614C616243016115";
-    private String sunny = "4D656469614C616243014441";
-    //private String edwinna = "4D656469614C616243014441";
-    //4D656469614C616243015237
+
     String debugState;
-	long hour = System.currentTimeMillis();
-	Calendar currentTime = Calendar.getInstance();
-	
+
 	/*
      * Cosntruct a task
      * @param activity
      */
+	public GlassHeatReader(){
+	}
+	
     public GlassHeatReader (GlassHeatMain activity){
     	super();
-    	this.activity = activity;
-    	this.context = this.activity.getApplicationContext();
+    	this.mGHMain = activity;
+    	this.context = this.mGHMain.getApplicationContext();
+
+        WiFi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+    }
+    
+    public GlassHeatReader (GlassHeatActivity activity){
+    	super();
+    	this.mGHActivity = activity;
+    	this.context = this.mGHActivity.getApplicationContext();
 
         WiFi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
     }
@@ -93,7 +92,11 @@ public class GlassHeatReader extends AsyncTask<String, Void, JSONObject>  {
 		}
         return json;
     }
-
+    /*
+    protected void onPostExecute(JSONObject result){
+    	this.handler.sendEmptyMessage(0);
+    }*/
+    /*
     protected void onPostExecute(JSONObject result){
 
     	if (result == null) return; 
@@ -116,7 +119,6 @@ public class GlassHeatReader extends AsyncTask<String, Void, JSONObject>  {
         			if (id != null){
         				for(int j=0; j<id.length();j++){
 	        				test = id.getString(j);
-
 	        				//PrintDetect (test);
 		        			if (test.equals(tito) || test.equals(tito2)){
 		        				report = name;
@@ -128,9 +130,9 @@ public class GlassHeatReader extends AsyncTask<String, Void, JSONObject>  {
 		        			if (test.equals(sunny)){
 			        			System.out.println("I saw Sunny! at " + name + " at: " + currentTime.getTime());
 		        			}
-		        			/*if (test.equals(edwinna)){
-			        			System.out.println("I saw Sunny! at " + name + " at: " + currentTime.getTime());
-		        			}*/
+		        			//if (test.equals(edwinna)){
+			        		//	System.out.println("I saw Sunny! at " + name + " at: " + currentTime.getTime());
+		        			//}
         				}
 
         		        //this.activity.handleGlass(report);
@@ -141,4 +143,5 @@ public class GlassHeatReader extends AsyncTask<String, Void, JSONObject>  {
 	    	}
 		}
     }
+    */
 }
