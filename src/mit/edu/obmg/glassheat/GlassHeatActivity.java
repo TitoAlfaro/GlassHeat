@@ -255,5 +255,20 @@ public class GlassHeatActivity extends Activity implements OnSeekBarChangeListen
 		//mHeatValue = seekBar.getProgress();
 		mHeatText.setText("Heat Value: " + mHeatValue*100);
 	}
+	
+	// NOTE: Tito had this in GlassHeatMain but it was not being called
+	// delete if not needed. 
+	public void handleGlass(String report){
+		String hide = "e14-348-1";
+		if (hide.equals(report)){
+			mfoundMe.setVisibility(View.VISIBLE);
+			mfoundMe.setText("you found Me");
+			mHeatValue = 80;
+		}else{
+			mfoundMe.setVisibility(View.VISIBLE);
+			mfoundMe.setText("Keep Looking");
+			mHeatValue = 20;
+		}
+	}
 
 }
