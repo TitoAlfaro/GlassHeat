@@ -1,6 +1,8 @@
 package mit.edu.obmg.glassheat.ioio;
 
 
+import java.lang.reflect.Method;
+
 import mit.edu.obmg.glassheat.R;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -29,9 +31,31 @@ public class IOIOGlassHeatService extends IOIOService {
 	private static final int PWM_FREQ = 10000;
 	private final int HEAT_VALUE_MULTIPLIER = 100;
 	
+	
+	
 	private int mHeatBarValue = 0; 
 	
 	private boolean mDebugging = false; 
+	
+	/* TODO: finish later....
+	 * NOTE: this may be to simple, may need it to be a dicontary or to contain a 
+	 * structure, sot that we can say if pin N is in/out A/D or if we want PwmOut etc...
+	 */
+	private boolean[] mInput = new boolean[46]; // false means input...
+	private boolean[] mOutput = new boolean[46]; // false means input...
+	private boolean[] mPins = new boolean[46]; 
+	public void initAllPinsFalse(){
+		/*
+		 * We initialize that there is no input or output 
+		 * and all pins are off. 
+		 */
+		for(int i = 0; i < 46; i++) mInput[i] = false;
+		for(int i = 0; i < 46; i++) mOutput[i] = false;
+		// illegal to have mInput[i] == mOutput[j] == true, since cannot 
+		// both be input and output for a pin... 
+		for(int i = 0; i < 46; i++) mPins[i] = false; 
+	}
+	
 	
 	@Override
 	protected IOIOLooper createIOIOLooper() {
@@ -41,8 +65,12 @@ public class IOIOGlassHeatService extends IOIOService {
 			protected void setup() throws ConnectionLostException,
 					InterruptedException {
 				mIOIOConnected = true; 
+				// TODO: make it so either digital in our out that is stored in 
+				// a vector that can be called from a general purpose function later
+				
 				mDebugLED = ioio_.openDigitalOutput(0, true);
-				mHeatPWM = ioio_.openPwmOutput(HEAT_PIN, PWM_FREQ);		
+				mHeatPWM = ioio_.openPwmOutput(HEAT_PIN, PWM_FREQ);	
+				
 			}
 
 			@Override

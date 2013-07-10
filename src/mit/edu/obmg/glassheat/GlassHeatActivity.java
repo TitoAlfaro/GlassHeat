@@ -11,8 +11,6 @@ import mit.edu.obmg.glassheat.ioio.IOIOGlassHeatService.LocalBinder;
 import mit.edu.obmg.glassheat.net.AsyncGetJSONTask;
 import mit.edu.obmg.glassheat.net.Wifi;
 
-
-import mit.edu.obmg.glassheat.tasks.GlassHeatReader;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -168,7 +166,7 @@ public class GlassHeatActivity extends Activity implements OnSeekBarChangeListen
 			Toast.makeText(GlassHeatActivity.this, "Service is connected", 1000).show();
 			mBounded = true;
 			LocalBinder mLocalBinder = (LocalBinder)service;
-			mIOIOService = mLocalBinder.getServerInstance();
+			mIOIOService = mLocalBinder.getServerInstance(); 
 		}
 
 		@Override

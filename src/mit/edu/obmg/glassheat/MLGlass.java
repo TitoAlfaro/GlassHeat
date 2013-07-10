@@ -68,7 +68,19 @@ public class MLGlass {
 		}
 	}
 	
-	public void handleHiddenGlassJSONResults(JSONObject result){
+	private String mHiddenGlassId; 
 	
+	public void handleHiddenGlassJSONResults(JSONObject result){
+		try {
+			mHiddenGlassId = result.getString("GLASS_ID");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mHiddenGlassId = "none";
+		}
+	}
+	
+	public String getHiddenGlassId(){
+		return mHiddenGlassId; 
 	}
 }
