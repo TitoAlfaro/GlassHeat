@@ -28,11 +28,13 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class GlassHeatActivity extends Activity implements OnSeekBarChangeListener {
+public class GlassHeatActivity extends Activity implements 	OnClickListener,
+															OnSeekBarChangeListener {
 	private static final String TAG = GlassHeatActivity.class.getSimpleName(); 
 
 	//UI
 	private ToggleButton mDebugButton;
+	private boolean mDebugState;
 
 	private IOIOGlassHeatService mIOIOService;
 	private boolean mBounded = false;  
@@ -80,7 +82,7 @@ public class GlassHeatActivity extends Activity implements OnSeekBarChangeListen
 	
 	private String mHiddenGlassId;
 	private String mCurrentLocationGlassId;
-	private int[][] distanceMatrix; 
+	
 	 
 	
 	@Override
@@ -91,6 +93,8 @@ public class GlassHeatActivity extends Activity implements OnSeekBarChangeListen
 				
 		setContentView(R.layout.activity_main);
 		mDebugButton = (ToggleButton) findViewById(R.id.button);
+		mDebugButton.setOnClickListener(this);
+		
 		mGlass = new MLGlass(); 
 		//Glass
 		mfoundMe = (TextView) findViewById(R.id.found_you);
@@ -100,18 +104,9 @@ public class GlassHeatActivity extends Activity implements OnSeekBarChangeListen
 		mHeatText = (TextView) findViewById(R.id.seekBarText);
 		mHeatBar = (SeekBar) findViewById(R.id.seekBarHeat);
 		mHeatBar.setOnSeekBarChangeListener(this);
-		mHeatBar.setProgress(0);
+		//mHeatBar.setProgress(0);
 
-		distanceMatrix = new int[23][23]; 
-		for(int i = 0; i < 23; i++){
-			for(int j = 0; j < 23; j++){
-				if(i == j){
-					distanceMatrix[i][j] = 0; 
-				}else{
-					distanceMatrix[i][j] = i+j; 
-				}
-			}
-		}
+		
 	    /*  You current location glass id should be your 'i' index of the matrix distanceMatrix[i][j]
 	     *  the location you want to be at should be 'j'. The value distanceMatrix[i][j] will be the
 	     *  distance from current location 'i' to desired location 'j'. 
@@ -154,6 +149,19 @@ public class GlassHeatActivity extends Activity implements OnSeekBarChangeListen
 				mCheckHiddenGlasshandler.postDelayed(this, LONG_INTERVAL);
 			}
 		}, 1000);
+		
+		
+		/*
+		 * mCheckHiddenGlasshandler = new Handler();
+		mCheckHiddenGlasshandler.postDelayed(mCheckHiddenGlassRunnable = new Runnable() { 
+			@Override
+			public void run() {
+				if hidden glass and I know where I am at check the distance
+				and assign to heat
+				mIOIOService.setHeatBarValue( getDistance() );
+			}
+		}, 1000);
+		 */
 		
 	}
 	
@@ -201,6 +209,10 @@ public class GlassHeatActivity extends Activity implements OnSeekBarChangeListen
 		// make sure we stop runnable when exiting app. 
 		mCheckMLGlasshandler.removeCallbacks(mCheckMLGlassRunnable);
 		mCheckHiddenGlasshandler.removeCallbacks(mCheckHiddenGlassRunnable);
+		if(mBounded) {
+			unbindService(mConnection);
+			mBounded = false;
+		}
 		super.onDestroy(); 
 	}
 
@@ -250,10 +262,38 @@ public class GlassHeatActivity extends Activity implements OnSeekBarChangeListen
 	}
 
 	private void handleHeat(final SeekBar seekBar){
-		//mHeatValue = seekBar.getProgress();
+		mHeatValue = seekBar.getProgress();
 		mHeatText.setText("Heat Value: " + mHeatValue*100);
+		mIOIOService.setHeatBarValue(mHeatValue);
 	}
 	
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()){
+
+		case R.id.button:
+			if (mDebugState == true){
+				mDebugState = false;
+				mDebugButton.setChecked(mDebugState);
+				mDebugButton.setText("Debug Off");
+				try{
+					mIOIOService.setLED(true);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}else{
+				mDebugState = true;
+				mDebugButton.setChecked(mDebugState);
+				mDebugButton.setText("Debug On");
+				try{
+					mIOIOService.setLED(false);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+			break;
+		}		
+	}
 	// NOTE: Tito had this in GlassHeatMain but it was not being called
 	// delete if not needed. 
 	public void handleGlass(String report){

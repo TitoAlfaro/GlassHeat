@@ -68,6 +68,22 @@ public class MLGlass {
 		}
 	}
 	
+	private int[][] distanceMatrix; 
+	
+	public int getDistance(){
+		for(int i = 0; i < 23; i++){
+			for(int j = 0; j < 23; j++){
+				if(i == j){
+					distanceMatrix[i][j] = 0; 
+				}else{
+					distanceMatrix[i][j] = i+j; 
+				}
+			}
+		}
+		
+		return 42;
+	}
+	
 	private String mHiddenGlassId; 
 	
 	public void handleHiddenGlassJSONResults(JSONObject result){
@@ -83,4 +99,7 @@ public class MLGlass {
 	public String getHiddenGlassId(){
 		return mHiddenGlassId; 
 	}
+	
+	
+	
 }
