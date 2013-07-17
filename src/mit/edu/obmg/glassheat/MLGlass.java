@@ -6,8 +6,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.net.wifi.WifiManager;
+import android.util.Log;
+
 public class MLGlass {
 
+	private static final String TAG = "MLGlass";
+	
 	// TODO: make better variables
 	public static final String TAG_POLLERS = "pollers";
 	public JSONArray pollers = null;
@@ -68,7 +73,39 @@ public class MLGlass {
 		}
 	}
 	
-	public void handleHiddenGlassJSONResults(JSONObject result){
+	private int[][] distanceMatrix; 
 	
+	public int getDistance(){
+		for(int i = 0; i < 23; i++){
+			for(int j = 0; j < 23; j++){
+				if(i == j){
+					distanceMatrix[i][j] = 0; 
+				}else{
+					distanceMatrix[i][j] = i+j; 
+				}
+			}
+		}
+		
+		return 42;
 	}
+	
+	private String mHiddenGlassId; 
+	
+	public void handleHiddenGlassJSONResults(JSONObject result){
+
+		try {
+			mHiddenGlassId = result.getString("GLASS_ID");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mHiddenGlassId = "none";
+		}
+	}
+	
+	public String getHiddenGlassId(){
+		return mHiddenGlassId; 
+	}
+	
+	
+	
 }

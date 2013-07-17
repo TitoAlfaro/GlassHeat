@@ -1,15 +1,17 @@
 package mit.edu.obmg.glassheat.ioio;
 
+import java.lang.reflect.Method;
 
-import mit.edu.obmg.glassheat.R;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.IOIO;
 import ioio.lib.api.IOIOFactory;
@@ -19,18 +21,19 @@ import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.android.IOIOService;
 
+import mit.edu.obmg.glassheat.*;
+
 public class IOIOGlassHeatService extends IOIOService {
 	private static final String TAG = IOIOGlassHeatService.class.getSimpleName(); 
 	private boolean mIOIOConnected = false; 
-	
+		
 	/** The on-board LED. */
 	private DigitalOutput mDebugLED = null; 
 	//Heat
 	private PwmOutput mHeatPWM;
-	private final int LED1_PIN = 1;
 	private static final int HEAT_PIN = 34;
 	private static final int PWM_FREQ = 10000;
-	private final int HEAT_VALUE_MULTIPLIER = 100;
+	private final int HEAT_VALUE_MULTIPLIER = 10;
 	
 	private int mHeatBarValue = 0; 
 	
@@ -38,6 +41,27 @@ public class IOIOGlassHeatService extends IOIOService {
 	private IOIOGlassHeatService mIOIOService; 
 	private NotificationManager mNotificationMngr; 
 	private IOIO ioio = null;
+	
+	/* TODO: finish later....
+	 * NOTE: this may be to simple, may need it to be a dicontary or to contain a 
+	 * structure, so that we can say if pin N is in/out A/D or if we want PwmOut etc...
+	 */
+	private boolean[] mInput = new boolean[46]; // false means input...
+	private boolean[] mOutput = new boolean[46]; // false means input...
+	private boolean[] mPins = new boolean[46]; 
+	
+	public void initAllPinsFalse(){
+		/*
+		 * We initialize that there is no input or output 
+		 * and all pins are off. 
+		 */
+		for(int i = 0; i < 46; i++) mInput[i] = false;
+		for(int i = 0; i < 46; i++) mOutput[i] = false;
+		// illegal to have mInput[i] == mOutput[j] == true, since cannot 
+		// both be input and output for a pin... 
+		for(int i = 0; i < 46; i++) mPins[i] = false; 
+	}
+	
 	
 	@Override
 	protected IOIOLooper createIOIOLooper() {
@@ -62,13 +86,11 @@ public class IOIOGlassHeatService extends IOIOService {
 		         .build();
 
 				mNotificationMngr.notify(0, noti);
-				
 			}
 
 			@Override
 			public void loop() throws ConnectionLostException,
 			    InterruptedException {
-				
 				//things that you want to repeat over and over 
 				Thread.sleep(100);
 
@@ -76,18 +98,18 @@ public class IOIOGlassHeatService extends IOIOService {
 					if (mDebugging == true){
 						mHeatPWM.setPulseWidth(mHeatBarValue * HEAT_VALUE_MULTIPLIER);
 						Log.i(TAG, "setPulseWidth: "+ mHeatBarValue * HEAT_VALUE_MULTIPLIER);
-					} 
+					}else{
+						//mHeatPWM.setPulseWidth(/*get * HEAT_VALUE_MULTIPLIER*/);
+					}
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
 				}
 			}
 		};
 	}
-	private boolean mLedState = false; 
-	private boolean mPowerState = false; 
-	private int mHeatState = 0;
 	
 	@SuppressWarnings("deprecation")
+	
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
@@ -135,6 +157,9 @@ public class IOIOGlassHeatService extends IOIOService {
 		if(mIOIOConnected){
 			try{
 				mDebugLED.write(state);
+				if(state == true){
+					mDebugging = false;
+				}else mDebugging = true;
 			}catch(ConnectionLostException e){
 				e.printStackTrace(); 
 				mIOIOConnected = false; 
@@ -144,8 +169,9 @@ public class IOIOGlassHeatService extends IOIOService {
 	
 	public void setHeatBarValue(int heatValue){
 		if(mIOIOConnected){
-				//TODO: need check for proper heat value, what is the range? 
-				mHeatBarValue = heatValue;
+			//TODO: need check for proper heat value, what is the range? 
+			Log.d(TAG, "setting heat to "+ heatValue);
+			mHeatBarValue = heatValue;
 		}
 	}
 }
