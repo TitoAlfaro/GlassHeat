@@ -121,20 +121,13 @@ public class IOIOGlassHeatService extends IOIOService {
 									"stop", null, this, this.getClass()), 0));
 			notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_AUTO_CANCEL;
 			nm.notify(0, notification);
-			
-			/*
-			Notification.Builder noti = new Notification.Builder(getBaseContext()); 
-			
-	         noti.setContentTitle("New mail from ")
-	         .setContentText("IOIO service running")
-	         .setSmallIcon(R.drawable.ic_launcher)
-	         .build();
-	         */
-			
+						
 		}
 	}
 	@Override
 	public void onDestroy(){
+		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		nm.cancel(0);
 		stopSelf();
 	    Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show(); 
 	}

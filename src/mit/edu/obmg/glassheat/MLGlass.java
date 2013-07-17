@@ -6,8 +6,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.net.wifi.WifiManager;
+import android.util.Log;
+
 public class MLGlass {
 
+	private static final String TAG = "MLGlass";
+	
 	// TODO: make better variables
 	public static final String TAG_POLLERS = "pollers";
 	public JSONArray pollers = null;
@@ -87,6 +92,7 @@ public class MLGlass {
 	private String mHiddenGlassId; 
 	
 	public void handleHiddenGlassJSONResults(JSONObject result){
+
 		try {
 			mHiddenGlassId = result.getString("GLASS_ID");
 		} catch (JSONException e) {

@@ -13,8 +13,10 @@ import mit.edu.obmg.glassheat.net.Wifi;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -52,8 +54,8 @@ OnSeekBarChangeListener {
 
 	private TextView mfoundMe;
 	private static final int WIFI_OFF = 500;
-	private Wifi mWifi;  
-
+	private Wifi mWifi;
+	public WifiManager titoWiFi;
 	//Heat FeedBack
 	private final int mOutHeatPin = 34;
 	private final int mPWMFreq = 100;
@@ -119,6 +121,8 @@ OnSeekBarChangeListener {
 		mWifi = new Wifi(this.getApplicationContext()); 
 		mWifi.turnWifiOn(); 
 
+		//dealWithWiFi();
+
 		mAsyncHandler = new Handler(){
 			@Override
 			public void handleMessage(Message msg){
@@ -129,6 +133,7 @@ OnSeekBarChangeListener {
 				}
 			}
 		};
+
 
 		mCheckMLGlasshandler = new Handler(); 
 		mCheckMLGlasshandler.postDelayed(mCheckMLGlassRunnable = new Runnable() { 
@@ -163,6 +168,16 @@ OnSeekBarChangeListener {
 		}, 1000);
 		 */
 
+	}
+
+	private void dealWithWiFi() {
+		titoWiFi = (WifiManager)this.getSystemService(Context.WIFI_SERVICE);
+		Log.d(TAG,"WiFi: " + titoWiFi.isWifiEnabled());
+		if(titoWiFi.isWifiEnabled() == true){
+			Log.i(TAG, "resetting WiFi");
+			titoWiFi.setWifiEnabled(false);
+			titoWiFi.setWifiEnabled(true);
+		}else titoWiFi.setWifiEnabled(true);
 	}
 
 	/*
@@ -223,6 +238,7 @@ OnSeekBarChangeListener {
 		}; 
 		mlGlassCheck.handler = mAsyncHandler; 
 		mlGlassCheck.execute(ML_CLASS_URL, Integer.toString(mCheckInterval));
+
 	}
 
 	private void checkHiddenGlass(){
