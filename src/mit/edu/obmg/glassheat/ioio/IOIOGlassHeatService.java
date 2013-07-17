@@ -25,9 +25,7 @@ import mit.edu.obmg.glassheat.*;
 public class IOIOGlassHeatService extends IOIOService {
 	private static final String TAG = IOIOGlassHeatService.class.getSimpleName(); 
 	private boolean mIOIOConnected = false; 
-	
-	public int mId = 101;
-	
+		
 	/** The on-board LED. */
 	private DigitalOutput mDebugLED = null; 
 	//Heat
@@ -103,25 +101,16 @@ public class IOIOGlassHeatService extends IOIOService {
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
 		
-		NotificationCompat.Builder mBuilder =
-        		new NotificationCompat.Builder(this)
-        		.setSmallIcon(R.drawable.ic_launcher)
-        		.setContentTitle("My notification")
-        		.setContentText("Hello Notification");
-			// Creates an explicit intent for an Activity in your app
-			 //Intent resultIntent = new Intent(this, ResultActivity.class);
 		
 		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		nm.notify(mId, mBuilder.build());
 		if (intent != null && intent.getAction() != null
 				&& intent.getAction().equals("stop")) {
 			// User clicked the notification. Need to stop the service.
-			nm.cancel(mId);
+			nm.cancel(0);
 			mIOIOConnected = false; 
 			stopSelf();
 		} else {
 			// Service starting. Create a notification.
-			@SuppressWarnings("deprecation")
 			Notification notification = new Notification(
 					R.drawable.ic_launcher, "IOIO service running",
 					System.currentTimeMillis());
@@ -130,7 +119,7 @@ public class IOIOGlassHeatService extends IOIOService {
 					.setLatestEventInfo(this, "IOIO Service", "Click to stop",
 							PendingIntent.getService(this, 0, new Intent(
 									"stop", null, this, this.getClass()), 0));
-			notification.flags |= Notification.FLAG_ONGOING_EVENT;
+			notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_AUTO_CANCEL;
 			nm.notify(0, notification);
 			
 			/*
@@ -146,6 +135,7 @@ public class IOIOGlassHeatService extends IOIOService {
 	}
 	@Override
 	public void onDestroy(){
+		stopSelf();
 	    Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show(); 
 	}
 
