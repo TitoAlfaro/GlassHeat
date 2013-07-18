@@ -1,7 +1,5 @@
 package mit.edu.obmg.glassheat.ioio;
 
-import java.lang.reflect.Method;
-
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Binder;
@@ -76,7 +74,7 @@ public class IOIOGlassHeatService extends IOIOService {
 				Intent intent = new Intent("stop", null, mIOIOGlassHeatService, mIOIOGlassHeatService.getClass());
 				PendingIntent pIntent = PendingIntent.getService(mIOIOGlassHeatService, 0, intent, 0);
 				
-				Notification noti = new Notification.Builder(mIOIOGlassHeatService)
+				Notification noti = new NotificationCompat.Builder(mIOIOGlassHeatService)
 				 .setContentIntent(pIntent)
 		         .setContentTitle("Click to stop!!!")
 		         .setContentText("IOIO service running")
@@ -110,12 +108,12 @@ public class IOIOGlassHeatService extends IOIOService {
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
-
 		mIOIOGlassHeatService = this;
 		mNotificationMngr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		if (intent != null && intent.getAction() != null
 				&& intent.getAction().equals("stop")) {
 			// User clicked the notification. Need to stop the service.
+			ioio.disconnect();
 			mNotificationMngr.cancel(0);
 			mIOIOConnected = false; 
 			stopSelf();
