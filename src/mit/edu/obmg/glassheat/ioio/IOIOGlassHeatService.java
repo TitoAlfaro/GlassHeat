@@ -2,16 +2,14 @@ package mit.edu.obmg.glassheat.ioio;
 
 import java.lang.reflect.Method;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.IOIO;
 import ioio.lib.api.IOIOFactory;
@@ -38,7 +36,7 @@ public class IOIOGlassHeatService extends IOIOService {
 	private int mHeatBarValue = 0; 
 	
 	private boolean mDebugging = false; 
-	private IOIOGlassHeatService mIOIOService; 
+	private IOIOGlassHeatService mIOIOGlassHeatService; 
 	private NotificationManager mNotificationMngr; 
 	private IOIO ioio = null;
 	
@@ -73,30 +71,19 @@ public class IOIOGlassHeatService extends IOIOService {
 				mIOIOConnected = true; 
 				ioio = IOIOFactory.create(); 
 				mDebugLED = ioio_.openDigitalOutput(0, true);
-				mHeatPWM = ioio_.openPwmOutput(HEAT_PIN, PWM_FREQ);		
-<<<<<<< HEAD
+				mHeatPWM = ioio_.openPwmOutput(HEAT_PIN, PWM_FREQ);	
 				
-				Intent intent = new Intent("stop", null, mIOIOService, mIOIOService.getClass());
-				PendingIntent pIntent = PendingIntent.getService(mIOIOService, 0, intent, 0);
+				Intent intent = new Intent("stop", null, mIOIOGlassHeatService, mIOIOGlassHeatService.getClass());
+				PendingIntent pIntent = PendingIntent.getService(mIOIOGlassHeatService, 0, intent, 0);
 				
-=======
-				
-				Intent intent = new Intent("stop", null, mIOIOService, mIOIOService.getClass());
-				PendingIntent pIntent = PendingIntent.getService(mIOIOService, 0, intent, 0);
-				
->>>>>>> dd40c87cbe794a4fc30da3223c06cf36c573db5a
-				Notification noti = new NotificationCompat.Builder(mIOIOService)
+				Notification noti = new Notification.Builder(mIOIOGlassHeatService)
 				 .setContentIntent(pIntent)
 		         .setContentTitle("Click to stop!!!")
 		         .setContentText("IOIO service running")
 		         .setSmallIcon(R.drawable.ic_launcher)
 		         .build();
 
-<<<<<<< HEAD
-				//mNotificationMngr.notify(0, noti);
-=======
 				mNotificationMngr.notify(0, noti);
->>>>>>> dd40c87cbe794a4fc30da3223c06cf36c573db5a
 			}
 
 			@Override
@@ -123,12 +110,9 @@ public class IOIOGlassHeatService extends IOIOService {
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
-		mIOIOService = this;
-<<<<<<< HEAD
-		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-=======
+
+		mIOIOGlassHeatService = this;
 		mNotificationMngr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
->>>>>>> dd40c87cbe794a4fc30da3223c06cf36c573db5a
 		if (intent != null && intent.getAction() != null
 				&& intent.getAction().equals("stop")) {
 			// User clicked the notification. Need to stop the service.
