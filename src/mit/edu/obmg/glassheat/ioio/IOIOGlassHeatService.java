@@ -8,7 +8,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.IOIO;
