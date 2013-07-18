@@ -114,11 +114,11 @@ public class IOIOGlassHeatService extends IOIOService {
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
 		mIOIOService = this;
-		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		mNotificationMngr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		if (intent != null && intent.getAction() != null
 				&& intent.getAction().equals("stop")) {
 			// User clicked the notification. Need to stop the service.
-			nm.cancel(0);
+			mNotificationMngr.cancel(0);
 			mIOIOConnected = false; 
 			stopSelf();
 		}
