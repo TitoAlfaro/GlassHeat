@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #################
 ## Eclipse
 #################
@@ -213,3 +214,40 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+=======
+# Directories  #
+################
+bin
+
+# Compiled files # 
+##################
+*.pyc
+*.apk
+*.dex
+*.class
+R.java
+
+# Packages #
+############
+*.tar 
+*.gz
+*.zip
+*.rar
+*.iso
+*.dmg
+
+# Eclipse IDE config files #
+####################
+#.project
+#.pydevproject
+*.swp # vim auto save file
+# Logs and databases #
+######################
+
+# OS generated #
+################
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
+>>>>>>> 534ba888e037a21e03bf682b184c43cd6f6e5394

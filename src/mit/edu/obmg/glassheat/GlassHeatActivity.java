@@ -205,13 +205,17 @@ OnSeekBarChangeListener {
 	protected void onStart() {
 		super.onStart();
 		Intent mIntent = new Intent(this, IOIOGlassHeatService.class);
-		bindService(mIntent, mConnection, BIND_AUTO_CREATE);
+		//obtain a persistent connectino to a service. Likewise, creates teh service
+    	//if not already running (calling service's onCreate).
+        bindService(mIntent, mConnection, BIND_AUTO_CREATE);
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
 		if(mBounded) {
+			// remove presistent connection to service. If no other binds to the service 
+			// the services onDestory will be called. 
 			unbindService(mConnection);
 			mBounded = false;
 		}
