@@ -74,10 +74,17 @@ public class IOIOGlassHeatService extends IOIOService {
 				ioio = IOIOFactory.create(); 
 				mDebugLED = ioio_.openDigitalOutput(0, true);
 				mHeatPWM = ioio_.openPwmOutput(HEAT_PIN, PWM_FREQ);		
+<<<<<<< HEAD
 				
 				Intent intent = new Intent("stop", null, mIOIOService, mIOIOService.getClass());
 				PendingIntent pIntent = PendingIntent.getService(mIOIOService, 0, intent, 0);
 				
+=======
+				
+				Intent intent = new Intent("stop", null, mIOIOService, mIOIOService.getClass());
+				PendingIntent pIntent = PendingIntent.getService(mIOIOService, 0, intent, 0);
+				
+>>>>>>> dd40c87cbe794a4fc30da3223c06cf36c573db5a
 				Notification noti = new NotificationCompat.Builder(mIOIOService)
 				 .setContentIntent(pIntent)
 		         .setContentTitle("Click to stop!!!")
@@ -85,7 +92,11 @@ public class IOIOGlassHeatService extends IOIOService {
 		         .setSmallIcon(R.drawable.ic_launcher)
 		         .build();
 
+<<<<<<< HEAD
 				//mNotificationMngr.notify(0, noti);
+=======
+				mNotificationMngr.notify(0, noti);
+>>>>>>> dd40c87cbe794a4fc30da3223c06cf36c573db5a
 			}
 
 			@Override
@@ -113,11 +124,15 @@ public class IOIOGlassHeatService extends IOIOService {
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
 		mIOIOService = this;
+<<<<<<< HEAD
 		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+=======
+		mNotificationMngr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+>>>>>>> dd40c87cbe794a4fc30da3223c06cf36c573db5a
 		if (intent != null && intent.getAction() != null
 				&& intent.getAction().equals("stop")) {
 			// User clicked the notification. Need to stop the service.
-			nm.cancel(0);
+			mNotificationMngr.cancel(0);
 			mIOIOConnected = false; 
 			stopSelf();
 		}
