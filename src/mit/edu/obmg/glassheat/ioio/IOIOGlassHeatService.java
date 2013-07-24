@@ -27,8 +27,8 @@ public class IOIOGlassHeatService extends IOIOService {
 	private DigitalOutput mDebugLED = null; 
 	//Heat
 	private PwmOutput mHeatPWM;
-	private static final int HEAT_PIN = 34;
-	private static final int PWM_FREQ = 10000;
+	private static final int HEAT_PIN = 40;
+	private static final int PWM_FREQ = 2000;	//In Hz. 2khz is recommended for Peltier
 	private final int HEAT_VALUE_MULTIPLIER = 10;
 	
 	private int mHeatBarValue = 0; 
@@ -60,7 +60,7 @@ public class IOIOGlassHeatService extends IOIOService {
 	
 	
 	@Override
-	protected IOIOLooper createIOIOLooper() {
+	protected BaseIOIOLooper createIOIOLooper() {
 		return new BaseIOIOLooper() {		
 
 			@Override
@@ -113,9 +113,13 @@ public class IOIOGlassHeatService extends IOIOService {
 		if (intent != null && intent.getAction() != null
 				&& intent.getAction().equals("stop")) {
 			// User clicked the notification. Need to stop the service.
-			ioio.disconnect();
 			mNotificationMngr.cancel(0);
 			mIOIOConnected = false; 
+			if(ioio != null){
+				ioio.disconnect();
+				ioio.disconnect();
+				ioio.disconnect();
+			}
 			stopSelf();
 		}
 	}
