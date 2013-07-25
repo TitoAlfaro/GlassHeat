@@ -1,9 +1,8 @@
 package mit.edu.obmg.glassheat.ioio;
 
-<<<<<<< HEAD
 import mit.edu.obmg.glassheat.R;
 
-=======
+
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Binder;
@@ -12,7 +11,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
->>>>>>> a972dd0ea2a3c83dcfa8ff4d127cdfeae34a900c
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.IOIO;
 import ioio.lib.api.IOIOFactory;
@@ -121,11 +119,7 @@ public class IOIOGlassHeatService extends IOIOService {
 		};
 	}
 	
-<<<<<<< HEAD
-	
-=======
 
->>>>>>> a972dd0ea2a3c83dcfa8ff4d127cdfeae34a900c
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);

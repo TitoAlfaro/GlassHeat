@@ -128,7 +128,7 @@ OnSeekBarChangeListener {
 			dealWithWiFi(titoWiFi, connectivityManager);
 		}*/
 
-		dealWithWiFi(titoWiFi, connectivityManager);
+		//dealWithWiFi(titoWiFi, connectivityManager);
 
 		//if (titoWiFi.isWifiEnabled() == false)dealWithWiFi(titoWiFi);
 
@@ -150,7 +150,7 @@ OnSeekBarChangeListener {
 			public void run() {
 				checkMLGlass(); 
 				// HAVE to remember that doing lots of HTTP (wifi) calls uses up battery. 
-				mCheckMLGlasshandler.postDelayed(this, SHORT_INTERVAL);
+				mCheckMLGlasshandler.postDelayed(this, EXTRA_SHORT_INTERVAL);
 			}
 		}, 1000);
 
@@ -262,6 +262,9 @@ OnSeekBarChangeListener {
 			@Override
 			protected void onPostExecute(JSONObject result){
 				mGlass.handleMLGlassJSONResults(result);
+				String g = mGlass.locationOf(mGlass.micah); 
+				Toast.makeText(GlassHeatActivity.this,"Found you at: "+g, Toast.LENGTH_SHORT).show();
+				Log.d(TAG, "glass loc: " + g);
 			}
 		}; 
 		mlGlassCheck.handler = mAsyncHandler; 
