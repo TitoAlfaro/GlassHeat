@@ -1,7 +1,18 @@
 package mit.edu.obmg.glassheat.ioio;
 
+<<<<<<< HEAD
 import mit.edu.obmg.glassheat.R;
 
+=======
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.os.Binder;
+import android.os.IBinder;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+>>>>>>> a972dd0ea2a3c83dcfa8ff4d127cdfeae34a900c
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.IOIO;
 import ioio.lib.api.IOIOFactory;
@@ -31,8 +42,8 @@ public class IOIOGlassHeatService extends IOIOService {
 	private DigitalOutput mDebugLED = null; 
 	//Heat
 	private PwmOutput mHeatPWM;
-	private static final int HEAT_PIN = 34;
-	private static final int PWM_FREQ = 10000;
+	private static final int HEAT_PIN = 40;
+	private static final int PWM_FREQ = 2000;	//In Hz. 2khz is recommended for Peltier
 	private final int HEAT_VALUE_MULTIPLIER = 10;
 	
 	private int mHeatBarValue = 0; 
@@ -74,7 +85,7 @@ public class IOIOGlassHeatService extends IOIOService {
 				mIOIOConnected = true; 
 				ioio = IOIOFactory.create(); 
 				mDebugLED = ioio_.openDigitalOutput(0, true);
-				mHeatPWM = ioio_.openPwmOutput(HEAT_PIN, PWM_FREQ);		
+				mHeatPWM = ioio_.openPwmOutput(HEAT_PIN, PWM_FREQ);	
 				
 				Intent intent = new Intent("stop", null, mIOIOGlassHeatService, mIOIOGlassHeatService.getClass());
 				PendingIntent pIntent = PendingIntent.getService(mIOIOGlassHeatService, 0, intent, 0);
@@ -110,7 +121,11 @@ public class IOIOGlassHeatService extends IOIOService {
 		};
 	}
 	
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> a972dd0ea2a3c83dcfa8ff4d127cdfeae34a900c
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
@@ -125,6 +140,11 @@ public class IOIOGlassHeatService extends IOIOService {
 				ioio.disconnect();
 			}
 			mIOIOConnected = false; 
+			if(ioio != null){
+				ioio.disconnect();
+				ioio.disconnect();
+				ioio.disconnect();
+			}
 			stopSelf();
 			disconnect = true;
 		}
