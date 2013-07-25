@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="14"
         android:targetSdkVersion="14" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -31,8 +31,18 @@
             </intent-filter>
         </activity>
 
+        <uses-library android:name="com.android.future.usb.accessory"
+			android:required="false" />
+        
         <service android:name="mit.edu.obmg.glassheat.ioio.IOIOGlassHeatService" >
+            <intent-filter>
+				<action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
+			</intent-filter>
+			<meta-data android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+				android:resource="@xml/accessory_filter" />
         </service>
+		
+          
     </application>
 
 </manifest>

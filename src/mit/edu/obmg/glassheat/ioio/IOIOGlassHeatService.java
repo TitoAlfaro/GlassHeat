@@ -1,24 +1,27 @@
 package mit.edu.obmg.glassheat.ioio;
 
-import java.lang.reflect.Method;
+import mit.edu.obmg.glassheat.R;
 
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.util.Log;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.IOIO;
 import ioio.lib.api.IOIOFactory;
 import ioio.lib.api.PwmOutput;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
-import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.android.IOIOService;
+import android.app.Notification;
 
-import mit.edu.obmg.glassheat.*;
+import android.app.NotificationManager;
+
+import android.support.v4.app.NotificationCompat; 
+import android.util.Log;
+
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.os.Binder;
+import android.os.IBinder;
+
+
 
 public class IOIOGlassHeatService extends IOIOService {
 	private static final String TAG = IOIOGlassHeatService.class.getSimpleName(); 
@@ -38,6 +41,7 @@ public class IOIOGlassHeatService extends IOIOService {
 	private IOIOGlassHeatService mIOIOGlassHeatService; 
 	private NotificationManager mNotificationMngr; 
 	private IOIO ioio = null;
+	private boolean disconnect = false;
 	
 	/* TODO: finish later....
 	 * NOTE: this may be to simple, may need it to be a dicontary or to contain a 
@@ -61,7 +65,7 @@ public class IOIOGlassHeatService extends IOIOService {
 	
 	
 	@Override
-	protected IOIOLooper createIOIOLooper() {
+	protected BaseIOIOLooper createIOIOLooper() {
 		return new BaseIOIOLooper() {		
 
 			@Override
@@ -75,7 +79,7 @@ public class IOIOGlassHeatService extends IOIOService {
 				Intent intent = new Intent("stop", null, mIOIOGlassHeatService, mIOIOGlassHeatService.getClass());
 				PendingIntent pIntent = PendingIntent.getService(mIOIOGlassHeatService, 0, intent, 0);
 				
-				Notification noti = new Notification.Builder(mIOIOGlassHeatService)
+				Notification noti = new NotificationCompat.Builder(mIOIOGlassHeatService)
 				 .setContentIntent(pIntent)
 		         .setContentTitle("Click to stop!!!")
 		         .setContentText("IOIO service running")
@@ -89,23 +93,23 @@ public class IOIOGlassHeatService extends IOIOService {
 			public void loop() throws ConnectionLostException,
 			    InterruptedException {
 				//things that you want to repeat over and over 
-				Thread.sleep(100);
-
-				try {
-					if (mDebugging == true){
-						mHeatPWM.setPulseWidth(mHeatBarValue * HEAT_VALUE_MULTIPLIER);
-						Log.i(TAG, "setPulseWidth: "+ mHeatBarValue * HEAT_VALUE_MULTIPLIER);
-					}else{
-						//mHeatPWM.setPulseWidth(/*get * HEAT_VALUE_MULTIPLIER*/);
-					}
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
+				Thread.sleep(20000);
+				if( disconnect ){
+					ioio.disconnect();
 				}
+				/*
+				if (mDebugging == true){
+					mHeatPWM.setPulseWidth(mHeatBarValue * HEAT_VALUE_MULTIPLIER);
+					Log.i(TAG, "setPulseWidth: "+ mHeatBarValue * HEAT_VALUE_MULTIPLIER);
+				}else{
+					//mHeatPWM.setPulseWidth(mHeatBarValue * HEAT_VALUE_MULTIPLIER);
+				}
+				*/
+			
 			}
 		};
 	}
 	
-	@SuppressWarnings("deprecation")
 	
 	@Override
 	public void onStart(Intent intent, int startId) {
@@ -116,8 +120,13 @@ public class IOIOGlassHeatService extends IOIOService {
 				&& intent.getAction().equals("stop")) {
 			// User clicked the notification. Need to stop the service.
 			mNotificationMngr.cancel(0);
+			if(ioio != null){
+				//we make sure to disconnect from the IOIO board when the service stops
+				ioio.disconnect();
+			}
 			mIOIOConnected = false; 
 			stopSelf();
+			disconnect = true;
 		}
 	}
 	
@@ -128,6 +137,7 @@ public class IOIOGlassHeatService extends IOIOService {
 			ioio.disconnect();
 			mNotificationMngr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 			mNotificationMngr.cancel(0);
+			disconnect = true;
 		}
 		super.onDestroy();
 	}
