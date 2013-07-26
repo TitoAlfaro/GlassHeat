@@ -1,4 +1,4 @@
-package src.mit.edu.obmg.glassheat;
+package mit.edu.obmg.glassheat;
 
 import java.util.Calendar;
 
@@ -6,10 +6,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import src.mit.edu.obmg.glassheat.ioio.IOIOGlassHeatService;
-import src.mit.edu.obmg.glassheat.ioio.IOIOGlassHeatService.LocalBinder;
-import src.mit.edu.obmg.glassheat.net.AsyncGetJSONTask;
-import src.mit.edu.obmg.glassheat.net.Wifi;
+import mit.edu.obmg.glassheat.ioio.IOIOGlassHeatService;
+import mit.edu.obmg.glassheat.ioio.IOIOGlassHeatService.LocalBinder;
+import mit.edu.obmg.glassheat.net.AsyncGetJSONTask;
+import mit.edu.obmg.glassheat.net.Wifi;
 
 import android.app.Activity;
 import android.content.ComponentName;

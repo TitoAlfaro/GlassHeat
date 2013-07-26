@@ -1,5 +1,6 @@
-package src.mit.edu.obmg.glassheat.ioio;
+package mit.edu.obmg.glassheat.ioio;
 
+import mit.edu.obmg.glassheat.R;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Binder;
@@ -15,13 +16,11 @@ import ioio.lib.api.PwmOutput;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.android.IOIOService;
+
 import android.app.Notification;
-
 import android.app.NotificationManager;
-
 import android.support.v4.app.NotificationCompat; 
 import android.util.Log;
-
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Binder;

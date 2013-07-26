@@ -1,4 +1,4 @@
-package src.mit.edu.obmg.glassheat;
+package mit.edu.obmg.glassheat;
 
 import java.util.Calendar;
 
