@@ -26,7 +26,24 @@ public class MLGlass {
     public String tito2 = "4D656469614C616243014366";
     public String micah = "4D656469614C616243016447";
     public String sunny = "4D656469614C616243014441";
+    
+    public String[] glassIds;
 	
+	/* Glass IDs
+	 * e14-140-2, e14-151-1, e14-245-1, e14-251-1, e14-274-1, e14-333-1, e14-348-1, e14-445-1, e14-474-1, 
+	 * e14-514-1, e14-514-2, e14-525-1, e14-548-1, e14-674-1, e15-003-1, e15-100-1, e15-200-1, e15-300-1, 
+	 * e15-344-1, e15-383-1, e15-400-1, e15-443-1, e15-468-1
+	 */
+    
+    public MLGlass(){
+    	initDistance();
+    	/*
+    	glassIds[] = 
+    			 { e14-140-2, e14-151-1, e14-245-1, e14-251-1, e14-274-1, e14-333-1, e14-348-1, e14-445-1, e14-474-1, 
+    			  e14-514-1, e14-514-2, e14-525-1, e14-548-1, e14-674-1, e15-003-1, e15-100-1, e15-200-1, e15-300-1, 
+    			  e15-344-1, e15-383-1, e15-400-1, e15-443-1, e15-468-1 } ;
+    			  */
+    }
     
 	public void handleMLGlassJSONResults(JSONObject result){
 		if (result == null) return; 
@@ -73,7 +90,18 @@ public class MLGlass {
 	
 	private int[][] distanceMatrix; 
 	
-	public int getDistance(){
+	public int getDistance(String curGlassId, String hiddenGlassId){
+		/*
+		 * for loop doing comparisions 
+		 * 
+		glassIds[i] = curGlassId; 
+		glassIds[j] = hiddenGlassId;
+		*/
+		
+		return 42;
+	}
+	
+	public void initDistance(){
 		for(int i = 0; i < 23; i++){
 			for(int j = 0; j < 23; j++){
 				if(i == j){
@@ -83,8 +111,6 @@ public class MLGlass {
 				}
 			}
 		}
-		
-		return 42;
 	}
 	
 	private String mHiddenGlassId; 

@@ -59,8 +59,6 @@ OnSeekBarChangeListener {
 	private Wifi mWifi;
 	public WifiManager titoWiFi;
 	//Heat FeedBack
-	private final int mOutHeatPin = 34;
-	private final int mPWMFreq = 100;
 	private final int POLLING_DELAY = 150;
 
 	//HeatBar UI
@@ -76,12 +74,6 @@ OnSeekBarChangeListener {
 	private Handler mAsyncHandler; 
 
 	private MLGlass mGlass;
-
-	/* Glass IDs
-	 * e14-140-2, e14-151-1, e14-245-1, e14-251-1, e14-274-1, e14-333-1, e14-348-1, e14-445-1, e14-474-1, 
-	 * e14-514-1, e14-514-2, e14-525-1, e14-548-1, e14-674-1, e15-003-1, e15-100-1, e15-200-1, e15-300-1, 
-	 * e15-344-1, e15-383-1, e15-400-1, e15-443-1, e15-468-1
-	 */
 
 	private String mHiddenGlassId;
 	private String mCurrentLocationGlassId;
@@ -265,6 +257,16 @@ OnSeekBarChangeListener {
 				mGlass.handleMLGlassJSONResults(result);
 				String g = mGlass.locationOf(mGlass.micah); 
 				Toast.makeText(GlassHeatActivity.this,"Found you at: "+g, Toast.LENGTH_SHORT).show();
+				
+				
+				/*
+				 * IF we have the hidden glass id then 
+				 * we want to check distance btn current location "g'"
+				 * and hidden glass. 
+				 * getDistanctBtn('é14-114-1', 'e15-224-2')
+				 */
+				
+				
 				Log.d(TAG, "glass loc: " + g);
 			}
 		}; 
@@ -339,19 +341,4 @@ OnSeekBarChangeListener {
 			break;
 		}		
 	}
-	// NOTE: Tito had this in GlassHeatMain but it was not being called
-	// delete if not needed. 
-	public void handleGlass(String report){
-		String hide = "e14-348-1";
-		if (hide.equals(report)){
-			mfoundMe.setVisibility(View.VISIBLE);
-			mfoundMe.setText("you found Me");
-			mHeatValue = 80;
-		}else{
-			mfoundMe.setVisibility(View.VISIBLE);
-			mfoundMe.setText("Keep Looking");
-			mHeatValue = 20;
-		}
-	}
-
 }

@@ -19,6 +19,9 @@ public class Wifi {
 		if(mWifi.isWifiEnabled() == true){
     		// NOTE: ask Tito if there is a reason why he flips wifi enabled?
     		// FOR NOW I just return since on.
+			
+			//I was flipping it since it sometime its on but not connected so I manually
+			//would turn it off and on again. I was recreating that but in code.
     		return; 
     		//mWifi.setWifiEnabled(false);
     		//mWifi.setWifiEnabled(true);
