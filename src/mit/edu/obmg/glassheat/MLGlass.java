@@ -1,4 +1,4 @@
-package mit.edu.obmg.glassheat;
+package src.mit.edu.obmg.glassheat;
 
 import java.util.Calendar;
 
@@ -22,10 +22,9 @@ public class MLGlass {
 	public JSONObject tag = null;
 	public Calendar currentTime = Calendar.getInstance();
 	public String report;
-    public String test;
     public String tito = "4D656469614C616243016115";
     public String tito2 = "4D656469614C616243014366";
-    public String micah = "4D656469614C616243016115";
+    public String micah = "4D656469614C616243016447";
     public String sunny = "4D656469614C616243014441";
 	
     
@@ -35,34 +34,32 @@ public class MLGlass {
     		pollers = result.getJSONArray(TAG_POLLERS);
 		}
 		catch (JSONException e){
-    		e.printStackTrace();
+			pollers = null; 
+			e.printStackTrace();
     	}
+	}
+	
+	/*
+	 * Should be called after handleMLGlassJSONResults so that pollers is set.
+	 */
+	public String locationOf(String person){
+		if( pollers == null) return "NONE";
+		String curGlass;
+		
 		for (int i = 0; i < pollers.length(); i++){
-
 			try{
-			JSONObject c = pollers.getJSONObject(i);
-			
+				JSONObject c = pollers.getJSONObject(i);
     			if (c.getString(TAG_NAME) != null){
-        			String name = c.getString(TAG_NAME);
-        			
+        			String glassName = c.getString(TAG_NAME);	
         			tag = c.getJSONObject(TAG_TAGS);
         			JSONArray id = tag.names();
         			if (id != null){
         				for(int j=0; j<id.length();j++){
-	        				test = id.getString(j);
-	        				//PrintDetect (test);
-		        			if (test.equals(tito) || test.equals(tito2)){
-		        				report = name;
-			        			System.out.println("I saw Tito! in " + name + 
+        					curGlass = id.getString(j);
+		        			if (curGlass.equals(person)){
+			        			Log.d("FOUND YOU", "I saw " + person + " in " + glassName + 
 			        					" at: " + currentTime.getTime());
-		        			}
-		        			if (test.equals(micah)){
-			        			System.out.println("I saw Micah! at " + name + 
-			        					" at: " + currentTime.getTime());
-		        			}
-		        			if (test.equals(sunny)){
-			        			System.out.println("I saw Sunny! at " + name + 
-			        					" at: " + currentTime.getTime());
+			        			return glassName;
 		        			}
         				}
         			}
@@ -71,6 +68,7 @@ public class MLGlass {
 	    		continue;
 	    	}
 		}
+		return "NONE";
 	}
 	
 	private int[][] distanceMatrix; 

@@ -1,4 +1,4 @@
-package mit.edu.obmg.glassheat.net;
+package src.mit.edu.obmg.glassheat.net;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;

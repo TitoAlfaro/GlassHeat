@@ -1,4 +1,4 @@
-package mit.edu.obmg.glassheat.net;
+package src.mit.edu.obmg.glassheat.net;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

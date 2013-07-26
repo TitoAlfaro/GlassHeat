@@ -1,4 +1,4 @@
-package mit.edu.obmg.glassheat;
+package src.mit.edu.obmg.glassheat;
 
 import java.util.Calendar;
 
@@ -6,16 +6,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import mit.edu.obmg.glassheat.ioio.IOIOGlassHeatService;
-import mit.edu.obmg.glassheat.ioio.IOIOGlassHeatService.LocalBinder;
-import mit.edu.obmg.glassheat.net.AsyncGetJSONTask;
-import mit.edu.obmg.glassheat.net.Wifi;
+import src.mit.edu.obmg.glassheat.ioio.IOIOGlassHeatService;
+import src.mit.edu.obmg.glassheat.ioio.IOIOGlassHeatService.LocalBinder;
+import src.mit.edu.obmg.glassheat.net.AsyncGetJSONTask;
+import src.mit.edu.obmg.glassheat.net.Wifi;
 
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -60,7 +62,6 @@ OnSeekBarChangeListener {
 	private final int mOutHeatPin = 34;
 	private final int mPWMFreq = 100;
 	private final int POLLING_DELAY = 150;
-	private final int HEAT_VALUE_MULTIPLIER = 100;
 
 	//HeatBar UI
 	private SeekBar mHeatBar;	
@@ -85,14 +86,13 @@ OnSeekBarChangeListener {
 	private String mHiddenGlassId;
 	private String mCurrentLocationGlassId;
 
-
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		startService(new Intent(this, IOIOGlassHeatService.class));
 
+		//setContentView(R.layout.activity_main);
 		setContentView(R.layout.activity_main);
 		mDebugButton = (ToggleButton) findViewById(R.id.button);
 		mDebugButton.setOnClickListener(this);
@@ -118,12 +118,22 @@ OnSeekBarChangeListener {
 		 * HOW long does it take to turn on? should we wait and then start checking
 		 * glass? 
 		 */
-		mWifi = new Wifi(this.getApplicationContext()); 
-		mWifi.turnWifiOn(); 
+		//mWifi = new Wifi(this.getApplicationContext()); 
+		//mWifi.turnWifiOn(); 
 
-		//dealWithWiFi();
+		ConnectivityManager connectivityManager = (ConnectivityManager)
+				this.getSystemService(Context.CONNECTIVITY_SERVICE);
+		titoWiFi = (WifiManager)this.getSystemService(Context.WIFI_SERVICE);
 
-		mAsyncHandler = new Handler(){
+		/*if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI) == null){
+			dealWithWiFi(titoWiFi, connectivityManager);
+		}*/
+
+		//dealWithWiFi(titoWiFi, connectivityManager);
+
+		//if (titoWiFi.isWifiEnabled() == false)dealWithWiFi(titoWiFi);
+
+		/*mAsyncHandler = new Handler(){
 			@Override
 			public void handleMessage(Message msg){
 				switch (msg.what) {
@@ -132,7 +142,7 @@ OnSeekBarChangeListener {
 					break;
 				}
 			}
-		};
+		};*/
 
 
 		mCheckMLGlasshandler = new Handler(); 
@@ -141,7 +151,7 @@ OnSeekBarChangeListener {
 			public void run() {
 				checkMLGlass(); 
 				// HAVE to remember that doing lots of HTTP (wifi) calls uses up battery. 
-				mCheckMLGlasshandler.postDelayed(this, SHORT_INTERVAL);
+				mCheckMLGlasshandler.postDelayed(this, EXTRA_SHORT_INTERVAL);
 			}
 		}, 1000);
 
@@ -170,15 +180,30 @@ OnSeekBarChangeListener {
 
 	}
 
-	private void dealWithWiFi() {
-		titoWiFi = (WifiManager)this.getSystemService(Context.WIFI_SERVICE);
-		Log.d(TAG,"WiFi: " + titoWiFi.isWifiEnabled());
-		if(titoWiFi.isWifiEnabled() == true){
-			Log.i(TAG, "resetting WiFi");
-			titoWiFi.setWifiEnabled(false);
-			titoWiFi.setWifiEnabled(true);
-		}else titoWiFi.setWifiEnabled(true);
+	private void dealWithWiFi(WifiManager wifi, ConnectivityManager manager) {
+		Log.d(TAG,"WiFi: " + wifi.isWifiEnabled());
+		Log.i(TAG, "resetting WiFi");
+		NetworkInfo networkInfo = null;
+		networkInfo = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		if (wifi.isWifiEnabled() == false){
+			wifi.setWifiEnabled(true);
+			while (networkInfo == null){
+
+				Log.d(TAG,"No connection yet");
+			}
+		}else{
+			wifi.setWifiEnabled(false);
+			Log.i(TAG, "WiFi off");
+			wifi.setWifiEnabled(true);
+			Log.d(TAG,"WiFi: " + wifi.isWifiEnabled());
+			while (networkInfo == null){
+
+				Log.d(TAG,"No connection yet");
+			}
+		}
+		
 	}
+
 
 	/*
 	 * Connect to IOIOGlassHeatService
@@ -206,8 +231,8 @@ OnSeekBarChangeListener {
 		super.onStart();
 		Intent mIntent = new Intent(this, IOIOGlassHeatService.class);
 		//obtain a persistent connectino to a service. Likewise, creates teh service
-    	//if not already running (calling service's onCreate).
-        bindService(mIntent, mConnection, BIND_AUTO_CREATE);
+		//if not already running (calling service's onCreate).
+		bindService(mIntent, mConnection, BIND_AUTO_CREATE);
 	}
 
 	@Override
@@ -238,6 +263,9 @@ OnSeekBarChangeListener {
 			@Override
 			protected void onPostExecute(JSONObject result){
 				mGlass.handleMLGlassJSONResults(result);
+				String g = mGlass.locationOf(mGlass.micah); 
+				Toast.makeText(GlassHeatActivity.this,"Found you at: "+g, Toast.LENGTH_SHORT).show();
+				Log.d(TAG, "glass loc: " + g);
 			}
 		}; 
 		mlGlassCheck.handler = mAsyncHandler; 
