@@ -60,6 +60,7 @@ OnSeekBarChangeListener {
 	public WifiManager titoWiFi;
 	//Heat FeedBack
 	private final int POLLING_DELAY = 150;
+	public int heatDistance;
 
 	//HeatBar UI
 	private SeekBar mHeatBar;	
@@ -248,7 +249,7 @@ OnSeekBarChangeListener {
 		super.onDestroy(); 
 	}
 
-	private void checkMLGlass(){
+	private int checkMLGlass(){
 		AsyncGetJSONTask mlGlassCheck = new AsyncGetJSONTask(){
 
 			@Override
@@ -259,6 +260,33 @@ OnSeekBarChangeListener {
 				if(mGlass.mHiddenGlassId != "none"){
 					distance = mGlass.getDistance(g, mGlass.mHiddenGlassId );
 				}
+				
+				if(distance == 50){
+					heatDistance = 100;
+				}else if(distance == 40){
+					heatDistance = 200;
+				}else if(distance == 30){
+					heatDistance = 300;
+				}else if(distance == 20){
+					heatDistance = 400;
+				}else if(distance == 10){
+					heatDistance = 500;
+				}else if(distance == 6){
+					heatDistance = 1000;
+				}else if(distance == 5){
+					heatDistance = 1100;
+				}else if(distance == 4){
+					heatDistance = 1200;
+				}else if(distance == 3){
+					heatDistance = 1300;
+				}else if(distance == 2){
+					heatDistance = 1400;
+				}else if(distance == 1){
+					heatDistance = 1500;
+				}else if(distance == 0){
+					heatDistance = 1600;
+				}
+				
 				
 				Toast.makeText(GlassHeatActivity.this,"Found you at: "+g+", distance = "+distance, Toast.LENGTH_SHORT).show();
 				/*
@@ -275,6 +303,7 @@ OnSeekBarChangeListener {
 		mlGlassCheck.handler = mAsyncHandler; 
 		mlGlassCheck.execute(ML_CLASS_URL, Integer.toString(mCheckInterval));
 
+		return heatDistance;
 	}
 
 	private void checkHiddenGlass(){
@@ -314,8 +343,14 @@ OnSeekBarChangeListener {
 
 	private void handleHeat(final SeekBar seekBar){
 		mHeatValue = seekBar.getProgress();
-		mHeatText.setText("Heat Value: " + mHeatValue*100);
-		mIOIOService.setHeatBarValue(mHeatValue);
+
+		if (mDebugState == true){
+			mHeatText.setText("Heat Value: " + mHeatValue*100);
+			mIOIOService.setHeatBarValue(mHeatValue);
+		}else{
+			mHeatText.setText("Heat Value: " + heatDistance);
+			mIOIOService.setHeatBarValue(heatDistance);
+		}
 	}
 
 	@Override

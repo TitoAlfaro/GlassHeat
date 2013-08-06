@@ -1,6 +1,6 @@
 package mit.edu.obmg.glassheat.ioio;
 
-import mit.edu.obmg.glassheat.R;
+import mit.edu.obmg.glassheat.*;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Binder;
@@ -17,14 +17,6 @@ import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.android.IOIOService;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.support.v4.app.NotificationCompat; 
-import android.util.Log;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
 
 
 
@@ -98,19 +90,14 @@ public class IOIOGlassHeatService extends IOIOService {
 			public void loop() throws ConnectionLostException,
 			    InterruptedException {
 				//things that you want to repeat over and over 
-				Thread.sleep(20000);
+				Thread.sleep(200);
 				if( disconnect ){
 					ioio.disconnect();
 				}
-				/*
-				if (mDebugging == true){
+				
 					mHeatPWM.setPulseWidth(mHeatBarValue * HEAT_VALUE_MULTIPLIER);
 					Log.i(TAG, "setPulseWidth: "+ mHeatBarValue * HEAT_VALUE_MULTIPLIER);
-				}else{
-					//mHeatPWM.setPulseWidth(mHeatBarValue * HEAT_VALUE_MULTIPLIER);
-				}
-				*/
-			
+				
 			}
 		};
 	}
