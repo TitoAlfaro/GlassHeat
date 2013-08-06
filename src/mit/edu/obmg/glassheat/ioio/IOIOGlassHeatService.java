@@ -183,6 +183,9 @@ public class IOIOGlassHeatService extends IOIOService {
 			//TODO: need check for proper heat value, what is the range? 
 			Log.d(TAG, "setting heat to "+ heatValue);
 			mHeatValue = heatValue;
+			if(heatValue == -1){
+				mHeatValue = 0;
+			}
 		}
 	}
 }

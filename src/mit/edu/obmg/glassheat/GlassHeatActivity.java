@@ -288,6 +288,7 @@ OnSeekBarChangeListener {
 				}
 				// SET heat value in IOIOService 
 				mIOIOService.setHeatValue(heatDistance);
+				mHeatText.setText("Heat Value: " + heatDistance);
 				
 				
 				Toast.makeText(GlassHeatActivity.this,"Found you at: "+g+", distance = "+distance, Toast.LENGTH_SHORT).show();
@@ -295,7 +296,7 @@ OnSeekBarChangeListener {
 				 * IF we have the hidden glass id then 
 				 * we want to check distance btn current location "g'"
 				 * and hidden glass. 
-				 * getDistanctBtn('�14-114-1', 'e15-224-2')
+				 * getDistanctBtn('e14-114-1', 'e15-224-2')
 				 */
 
 
