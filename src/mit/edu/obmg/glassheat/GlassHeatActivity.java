@@ -48,7 +48,7 @@ OnSeekBarChangeListener {
 	private static final String HIDEN_GLASS_URL = "http://18.85.54.205/glass";
 
 	public final int mCheckInterval = 5000; // 5 minutes = 300000, 2 min = 120000
-	public final int EXTRA_SHORT_INTERVAL = 5000; 
+	public final int EXTRA_SHORT_INTERVAL = 2000; 
 	public final int SHORT_INTERVAL = 30000; 
 	public final int MEDIUM_INTERVAL = 120000; 
 	public final int LONG_INTERVAL = 300000;  // 5 minutes
@@ -75,7 +75,6 @@ OnSeekBarChangeListener {
 
 	private MLGlass mGlass;
 
-	private String mHiddenGlassId;
 	private String mCurrentLocationGlassId;
 
 	@Override
@@ -193,7 +192,7 @@ OnSeekBarChangeListener {
 				Log.d(TAG,"No connection yet");
 			}
 		}
-		
+
 	}
 
 
@@ -256,17 +255,20 @@ OnSeekBarChangeListener {
 			protected void onPostExecute(JSONObject result){
 				mGlass.handleMLGlassJSONResults(result);
 				String g = mGlass.locationOf(mGlass.micah); 
-				Toast.makeText(GlassHeatActivity.this,"Found you at: "+g, Toast.LENGTH_SHORT).show();
+				int distance = -2;
+				if(mGlass.mHiddenGlassId != "none"){
+					distance = mGlass.getDistance(g, mGlass.mHiddenGlassId );
+				}
 				
-				
+				Toast.makeText(GlassHeatActivity.this,"Found you at: "+g+", distance = "+distance, Toast.LENGTH_SHORT).show();
 				/*
 				 * IF we have the hidden glass id then 
 				 * we want to check distance btn current location "g'"
 				 * and hidden glass. 
 				 * getDistanctBtn('é14-114-1', 'e15-224-2')
 				 */
-				
-				
+
+
 				Log.d(TAG, "glass loc: " + g);
 			}
 		}; 
@@ -281,6 +283,8 @@ OnSeekBarChangeListener {
 			@Override
 			protected void onPostExecute(JSONObject result){
 				mGlass.handleHiddenGlassJSONResults(result);
+
+				//mHiddenGlass = result
 			}
 		}; 
 		hiddenGlassCheck.handler = mAsyncHandler; 
