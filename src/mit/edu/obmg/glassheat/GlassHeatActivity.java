@@ -254,7 +254,7 @@ OnSeekBarChangeListener {
 			@Override
 			protected void onPostExecute(JSONObject result){
 				mGlass.handleMLGlassJSONResults(result);
-				String g = mGlass.locationOf(mGlass.micah); 
+				String g = mGlass.locationOf(mGlass.tito2); 
 				int distance = -2;
 				if(mGlass.mHiddenGlassId != "none"){
 					distance = mGlass.getDistance(g, mGlass.mHiddenGlassId );

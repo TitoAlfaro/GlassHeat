@@ -27,18 +27,13 @@ public class MLGlass {
 	public String micah = "4D656469614C616243016447";
 	public String sunny = "4D656469614C616243014441";
 
-	public String[] glassIds ={ 	"e14-151-1", 
+	public String[] glassIds ={ 	
+			"e14-151-1", 
 			"e14-251-1", "e14-274-1", 
 			"e14-333-1", "e14-348-1", "charm-1", "e15-344-1", "e15-383-1", "e15-300-1", 
 			"e14-474-1", "e14-443-1", "e15-443-1", "e15-468-1", "charm-5", "e15-400-1", 
 			"e14-525-1", "e14-514-2", "e14-514-1", "e14-548-1",
-		"e14-674-1" } ;
-
-	/* Glass IDs
-	 * e14-140-2, e14-151-1, e14-245-1, e14-251-1, e14-274-1, e14-333-1, e14-348-1, e14-445-1, e14-474-1, 
-	 * e14-514-1, e14-514-2, e14-525-1, e14-548-1, e14-674-1, e15-003-1, e15-100-1, e15-200-1, e15-300-1, 
-	 * e15-344-1, e15-383-1, e15-400-1, e15-443-1, e15-468-1
-	 */
+			"e14-674-1" } ;
 
 	public MLGlass(){
 		initDistance();
@@ -97,10 +92,10 @@ public class MLGlass {
 		int curGlassIndex = -1;
 		int hiddenGlassIndex = -1;
 		for(int i=0; i<20; i++){
-			if(curGlassId == glassIds[i]){
+			if(curGlassId.equals(glassIds[i])){
 				curGlassIndex = i;
 			}
-			if(hiddenGlassId == glassIds[i]){
+			if(hiddenGlassId.equals(glassIds[i])){
 				hiddenGlassIndex = i;
 			}
 		}
