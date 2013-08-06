@@ -286,6 +286,8 @@ OnSeekBarChangeListener {
 				}else if(distance == 0){
 					heatDistance = 1600;
 				}
+				// SET heat value in IOIOService 
+				mIOIOService.setHeatValue(heatDistance);
 				
 				
 				Toast.makeText(GlassHeatActivity.this,"Found you at: "+g+", distance = "+distance, Toast.LENGTH_SHORT).show();
@@ -293,7 +295,7 @@ OnSeekBarChangeListener {
 				 * IF we have the hidden glass id then 
 				 * we want to check distance btn current location "g'"
 				 * and hidden glass. 
-				 * getDistanctBtn('é14-114-1', 'e15-224-2')
+				 * getDistanctBtn('ï¿½14-114-1', 'e15-224-2')
 				 */
 
 
@@ -324,7 +326,7 @@ OnSeekBarChangeListener {
 	public void onProgressChanged(SeekBar seekBar, 	int progress, boolean fromUser) {
 
 		if (System.currentTimeMillis() - mLastChange > POLLING_DELAY) {
-			handleHeat(seekBar);
+			//handleHeat(seekBar);
 			mLastChange = System.currentTimeMillis();
 		}
 	}
@@ -337,10 +339,11 @@ OnSeekBarChangeListener {
 
 	@Override
 	public void onStopTrackingTouch(SeekBar seekBar) {
-		handleHeat(seekBar);
+		//handleHeat(seekBar);
 
 	}
 
+	/*
 	private void handleHeat(final SeekBar seekBar){
 		mHeatValue = seekBar.getProgress();
 
@@ -352,7 +355,8 @@ OnSeekBarChangeListener {
 			mIOIOService.setHeatBarValue(heatDistance);
 		}
 	}
-
+    */
+	
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()){

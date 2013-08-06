@@ -32,7 +32,7 @@ public class IOIOGlassHeatService extends IOIOService {
 	private static final int PWM_FREQ = 2000;	//In Hz. 2khz is recommended for Peltier
 	private final int HEAT_VALUE_MULTIPLIER = 10;
 	
-	private int mHeatBarValue = 0; 
+	private int mHeatValue = 0; 
 	
 	private boolean mDebugging = false; 
 	private IOIOGlassHeatService mIOIOGlassHeatService; 
@@ -94,9 +94,8 @@ public class IOIOGlassHeatService extends IOIOService {
 				if( disconnect ){
 					ioio.disconnect();
 				}
-				
-					mHeatPWM.setPulseWidth(mHeatBarValue * HEAT_VALUE_MULTIPLIER);
-					Log.i(TAG, "setPulseWidth: "+ mHeatBarValue * HEAT_VALUE_MULTIPLIER);
+					mHeatPWM.setPulseWidth(mHeatValue * HEAT_VALUE_MULTIPLIER);
+					Log.i(TAG, "setPulseWidth: "+ mHeatValue * HEAT_VALUE_MULTIPLIER);
 				
 			}
 		};
@@ -175,7 +174,15 @@ public class IOIOGlassHeatService extends IOIOService {
 		if(mIOIOConnected){
 			//TODO: need check for proper heat value, what is the range? 
 			Log.d(TAG, "setting heat to "+ heatValue);
-			mHeatBarValue = heatValue;
+			mHeatValue = heatValue;
+		}
+	}
+	
+	public void setHeatValue(int heatValue){
+		if(mIOIOConnected){
+			//TODO: need check for proper heat value, what is the range? 
+			Log.d(TAG, "setting heat to "+ heatValue);
+			mHeatValue = heatValue;
 		}
 	}
 }
