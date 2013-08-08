@@ -97,8 +97,9 @@ OnSeekBarChangeListener {
 		//Heat
 		mHeatText = (TextView) findViewById(R.id.seekBarText);
 		mHeatBar = (SeekBar) findViewById(R.id.seekBarHeat);
+		mHeatBar.setEnabled(false);
+		//mHeatBar.setClickable(false);
 		mHeatBar.setOnSeekBarChangeListener(this);
-		//mHeatBar.setProgress(0);
 
 
 		/*  You current location glass id should be your 'i' index of the matrix distanceMatrix[i][j]
@@ -287,8 +288,16 @@ OnSeekBarChangeListener {
 					heatDistance = 1600;
 				}
 				// SET heat value in IOIOService 
-				mIOIOService.setHeatValue(heatDistance);
-				mHeatText.setText("Heat Value: " + heatDistance);
+				if (mDebugState == true){
+					mHeatBar.setEnabled(true);
+					mHeatValue = mHeatBar.getProgress() * 2;
+				}else{
+					mHeatBar.setEnabled(false);
+					mHeatValue = heatDistance;
+					mHeatBar.setProgress(0);
+				}
+				mHeatText.setText("Heat Value: " + mHeatValue);
+				mIOIOService.setHeatValue(mHeatValue);
 				
 				
 				Toast.makeText(GlassHeatActivity.this,"Found you at: "+g+", distance = "+distance, Toast.LENGTH_SHORT).show();

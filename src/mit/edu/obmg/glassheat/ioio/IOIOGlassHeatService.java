@@ -30,7 +30,7 @@ public class IOIOGlassHeatService extends IOIOService {
 	private PwmOutput mHeatPWM;
 	private static final int HEAT_PIN = 40;
 	private static final int PWM_FREQ = 2000;	//In Hz. 2khz is recommended for Peltier
-	private final int HEAT_VALUE_MULTIPLIER = 10;
+	private final int HEAT_VALUE_MULTIPLIER = 100;
 	
 	private int mHeatValue = 0; 
 	
@@ -170,18 +170,21 @@ public class IOIOGlassHeatService extends IOIOService {
 		}
 	}
 	
-	public void setHeatBarValue(int heatValue){
+	/*public void setHeatBarValue(int heatValue){
 		if(mIOIOConnected){
 			//TODO: need check for proper heat value, what is the range? 
 			Log.d(TAG, "setting heat to "+ heatValue);
 			mHeatValue = heatValue;
 		}
-	}
+	}*/
 	
 	public void setHeatValue(int heatValue){
 		if(mIOIOConnected){
 			//TODO: need check for proper heat value, what is the range? 
 			Log.d(TAG, "setting heat to "+ heatValue);
+			if (mDebugging){
+				
+			}
 			mHeatValue = heatValue;
 			if(heatValue == -1){
 				mHeatValue = 0;
